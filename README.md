@@ -15,6 +15,8 @@ Drshill is a collaborative memecoin launcher designed for in-person events. Atte
 
 ![Ss shill](https://github.com/user-attachments/assets/4e4995ff-815d-4482-b7ea-ae87045f92cf)
 
+![Screenshot 2025-05-18 at 3 37 26 AM](https://github.com/user-attachments/assets/3a1f862f-3b82-404a-b7cd-042cd0057a2b)
+
 
 ## Requirements
 
