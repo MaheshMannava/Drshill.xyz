@@ -22,17 +22,17 @@ export function HowToShillDialog({ open = true, onOpenChange }: HowToShillDialog
             <div className="p-4 flex items-center justify-between border-b border-[#E6E6E6]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 flex items-center justify-center bg-[#bcbcbc]">
-                  <span className="font-serif text-base leading-none text-[#797979]">
+                  <span className="font-serif text-base leading-none text-black font-semibold">
                     Dr
                     <br />
                     Shill
                   </span>
                 </div>
-                <h2 className="text-xl font-serif">HOW TO SHILL</h2>
+                <h2 className="text-xl font-serif text-black font-bold">HOW TO SHILL</h2>
               </div>
               <button
                 onClick={() => onOpenChange?.(false)}
-                className="w-8 h-8 flex items-center justify-center text-xl hover:bg-black/5"
+                className="w-8 h-8 flex items-center justify-center text-xl hover:bg-black/5 text-black"
               >
                 ×
               </button>
@@ -43,7 +43,7 @@ export function HowToShillDialog({ open = true, onOpenChange }: HowToShillDialog
               {/* Speech bubble */}
               <div className="p-3 rounded-lg mb-6 relative font-serif bg-[#efefef]">
                 <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-[8px] border-l-[#FFFBE6] border-y-[6px] border-y-transparent" />
-                <p className="font-comic text-sm font-serif">
+                <p className="font-comic text-sm font-serif text-black">
                   &quot;YUH GOT TO TAKE RESPONSIBILITY FOR YOUR TICKETS, MUCHACHO.&quot;
                 </p>
               </div>
@@ -61,28 +61,28 @@ export function HowToShillDialog({ open = true, onOpenChange }: HowToShillDialog
 
               {/* Rules */}
               <div className="space-y-4 pr-36">
-                <p className="text-sm">
+                <p className="text-sm text-black font-medium">
                   YOU START WITH <span className="font-bold">100</span> TICKETS.
                 </p>
 
-                <p className="text-sm">
+                <p className="text-sm text-black font-medium">
                   SUBMIT A MEME FOR <span className="font-bold">60</span> TICKETS.
                 </p>
 
-                <p className="text-sm">
+                <p className="text-sm text-black font-medium">
                   VOTE ON MEMES (THUMBS UP OR DOWN). IT COSTS <span className="font-bold">1</span> TICKET PER VOTE.
                 </p>
 
-                <p className="text-sm">
+                <p className="text-sm text-black font-medium">
                   AT THE END OF THE DAY, THE MEME WITH THE MOST VOTES WILL BE MINTED AS A MEMECOIN ON THE{" "}
-                  <span className="font-bold text-blue-600">CORN NETWORK</span>.
+                  <span className="font-bold text-blue-800">CORN NETWORK</span>.
                 </p>
 
-                <p className="text-sm">
+                <p className="text-sm text-black font-medium">
                   IF YOU VOTED THUMBS UP ON THE WINNER, YOU&apos;LL RECEIVE A PROPORTIONAL SHARE OF THE NEW MEMECOIN.
                 </p>
 
-                <p className="text-sm">
+                <p className="text-sm text-black font-medium">
                   THE MEME CREATOR GETS <span className="font-bold">30%</span> OF THE TOTAL SUPPLY.
                 </p>
               </div>

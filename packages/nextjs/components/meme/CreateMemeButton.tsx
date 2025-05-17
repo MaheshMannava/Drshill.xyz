@@ -19,7 +19,7 @@ export function CreateMemeButton({ ticketCost = 60 }: CreateMemeButtonProps) {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Ticket className="h-5 w-5 text-gray-600" />
-            <span className="text-xl font-mono">{ticketCost}</span>
+            <span className="text-xl font-mono font-bold text-gray-800">{ticketCost}</span>
           </div>
           <Button
             className="flex-1 bg-white hover:bg-gray-50 text-black border border-gray-200 h-12 rounded-none font-serif"
