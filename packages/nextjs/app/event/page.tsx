@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Header } from "~~/components/meme/Header";
 import { CreateMemeButton } from "~~/components/meme/CreateMemeButton";
-import { MemeCard } from "~~/components/meme/MemeCard";
+import { Header } from "~~/components/meme/Header";
 import { HowToShillDialog } from "~~/components/meme/HowToShillDialog";
+import { MemeCard } from "~~/components/meme/MemeCard";
 
 // Mock memes data
 const memes = [
   {
     symbol: "PINP",
-    description:
-      "The coin that makes you a true individual. This should be a max of 3 lines of text...",
+    description: "The coin that makes you a true individual. This should be a max of 3 lines of text...",
     imageUrl: "/images/Image and frame.png",
     ticketCount: 8045,
     isTopPerformer: true,
@@ -25,8 +24,7 @@ const memes = [
   },
   {
     symbol: "KERN",
-    description:
-      "The Opportunity you've all been waiting for. Invest at least 12 thumbs for good luck!",
+    description: "The Opportunity you've all been waiting for. Invest at least 12 thumbs for good luck!",
     imageUrl: "/images/cornim11 1.png",
     ticketCount: 5,
   },
@@ -35,13 +33,13 @@ const memes = [
 export default function EventPage() {
   const [showHowTo, setShowHowTo] = useState(true);
   const searchParams = useSearchParams();
-  const eventId = searchParams?.get('id') || null;
-  
+  const eventId = searchParams?.get("id") || null;
+
   // Store event ID in local storage when page loads
   useEffect(() => {
     if (eventId) {
-      localStorage.setItem('currentEventId', eventId);
-      console.log('Event ID stored:', eventId);
+      localStorage.setItem("currentEventId", eventId);
+      console.log("Event ID stored:", eventId);
     }
   }, [eventId]);
 
@@ -53,9 +51,7 @@ export default function EventPage() {
         <div className="px-4 py-8">
           <div className="w-full max-w-4xl mx-auto p-6 bg-white shadow text-center">
             <h1 className="text-2xl font-bold mb-4">Invalid Event</h1>
-            <p className="text-gray-600">
-              No event ID was provided. Please scan a valid QR code to join an event.
-            </p>
+            <p className="text-gray-600">No event ID was provided. Please scan a valid QR code to join an event.</p>
           </div>
         </div>
       </div>
@@ -68,18 +64,13 @@ export default function EventPage() {
       <div className="px-4 py-8">
         <div className="w-full max-w-4xl mx-auto mb-6 p-4 bg-white shadow">
           <h1 className="text-xl font-serif">Event: {eventId}</h1>
-          <p className="text-sm text-gray-600">
-            Connect your wallet and claim your tokens to start participating!
-          </p>
+          <p className="text-sm text-gray-600">Connect your wallet and claim your tokens to start participating!</p>
         </div>
-        
+
         <CreateMemeButton ticketCost={60} />
         <div className="w-full max-w-4xl mx-auto space-y-4">
-          {memes.map((meme) => (
-            <div 
-              key={meme.symbol} 
-              className="bg-white shadow"
-            >
+          {memes.map(meme => (
+            <div key={meme.symbol} className="bg-white shadow">
               <MemeCard {...meme} />
             </div>
           ))}
@@ -88,4 +79,4 @@ export default function EventPage() {
       <HowToShillDialog open={showHowTo} onOpenChange={setShowHowTo} />
     </div>
   );
-} 
+}

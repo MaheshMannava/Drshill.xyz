@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { parseEther } from "viem";
-import { useAccount, useReadContract, useWriteContract, useWatchContractEvent } from "wagmi";
+import { useAccount, useReadContract, useWatchContractEvent, useWriteContract } from "wagmi";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 
 interface ShillButtonProps {
@@ -8,16 +8,16 @@ interface ShillButtonProps {
   ticketPrice?: bigint; // Default ticket price in CROP tokens
 }
 
-export const ShillButton: React.FC<ShillButtonProps> = ({ 
+export const ShillButton: React.FC<ShillButtonProps> = ({
   memeSymbol,
-  ticketPrice = parseEther("1") // Default 1 CROP token
+  ticketPrice = parseEther("1"), // Default 1 CROP token
 }) => {
   const { address, isConnected } = useAccount();
   const [isShilling, setIsShilling] = useState(false);
 
   // Get the deployed CropCircle contract
   const { data: cropCircleContract } = useDeployedContractInfo("CropCircle");
-  
+
   // Setup the contract write for buying tickets
   const { writeContract, isPending, isSuccess, data: hash } = useWriteContract();
 
@@ -50,7 +50,7 @@ export const ShillButton: React.FC<ShillButtonProps> = ({
   };
 
   return (
-    <button 
+    <button
       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       disabled={!isConnected || isShilling || isPending}
       onClick={handleShillClick}
@@ -58,4 +58,4 @@ export const ShillButton: React.FC<ShillButtonProps> = ({
       {isShilling || isPending ? "Shilling..." : "Shill Now"}
     </button>
   );
-}; 
+};

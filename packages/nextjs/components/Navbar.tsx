@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { WalletDialog } from "./WalletDialog";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
-import { formatEther } from "viem";
-import { WalletDialog } from "./WalletDialog";
 
 const Navbar = () => {
   const { address, isConnected } = useAccount();
@@ -16,7 +16,7 @@ const Navbar = () => {
   const { data: rawBalance } = useScaffoldReadContract({
     contractName: "CropToken",
     functionName: "balanceOf",
-    args: [address as `0x${string}` || undefined],
+    args: [(address as `0x${string}`) || undefined],
     query: {
       enabled: !!address,
     },
@@ -47,22 +47,14 @@ const Navbar = () => {
           <div className="bg-base-200 rounded-xl py-1.5 px-4">
             <span className="font-bold">CROP: {tokenBalance}</span>
           </div>
-          <button
-            className="btn btn-primary btn-sm px-4"
-            onClick={() => setWalletDialogOpen(true)}
-          >
-            {isConnected ? 
-              `${address?.substring(0, 6)}...${address?.substring(address.length - 4)}` : 
-              "Connect Wallet"}
+          <button className="btn btn-primary btn-sm px-4" onClick={() => setWalletDialogOpen(true)}>
+            {isConnected ? `${address?.substring(0, 6)}...${address?.substring(address.length - 4)}` : "Connect Wallet"}
           </button>
-          <WalletDialog 
-            open={walletDialogOpen} 
-            onOpenChange={setWalletDialogOpen} 
-          />
+          <WalletDialog open={walletDialogOpen} onOpenChange={setWalletDialogOpen} />
         </div>
       </div>
     </div>
   );
 };
 
-export default Navbar; 
+export default Navbar;

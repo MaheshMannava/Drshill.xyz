@@ -16,7 +16,7 @@ import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
   const pathname = usePathname();
-  
+
   // Only show the general scaffold-eth header for routes other than the home page and single event pages.
   // For home and event pages, we use our custom Header directly in those page components.
   const showScaffoldEthHeader = pathname !== null && pathname !== "/" && !pathname.startsWith("/event");

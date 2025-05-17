@@ -59,7 +59,7 @@ export const DisplayVariable = ({
         setInitialLoad(false);
       }
     };
-    
+
     safeRefetch();
   }, [refetch, refreshDisplayVariables, abiFunction.name]);
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { ThumbsDown, ThumbsUp, Ticket } from "lucide-react";
 import { MemeDialog } from "./MemeDialog";
+import { ThumbsDown, ThumbsUp, Ticket } from "lucide-react";
 
 interface MemeCardProps {
   symbol: string;
@@ -23,57 +23,53 @@ export const MemeCard: React.FC<MemeCardProps> = ({
 
   return (
     <>
-      <div 
+      <div
         className={`p-4 bg-white mb-1 border-b border-gray-200 cursor-pointer ${className}`}
         onClick={() => setDialogOpen(true)}
       >
         <div className="flex gap-4">
           {/* Image */}
           <div className="w-20 h-20 bg-gray-100 flex-shrink-0">
-            <img 
-              src={imageUrl} 
-              alt={`${symbol} meme`} 
-              className="w-full h-full object-cover"
-            />
+            <img src={imageUrl} alt={`${symbol} meme`} className="w-full h-full object-cover" />
           </div>
-          
+
           {/* Content */}
           <div className="flex-1">
             <h2 className="text-lg font-bold">${symbol}</h2>
             <p className="text-sm text-gray-700 mb-4">{description}</p>
-            
+
             <div className="flex items-center justify-between">
               {/* Action Buttons */}
               <div className="flex gap-1">
-                <button 
+                <button
                   className="bg-blue-600 text-white p-1.5 rounded-none flex items-center justify-center w-8 h-8"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
-                    console.log('Downvote', symbol);
+                    console.log("Downvote", symbol);
                   }}
                 >
                   <ThumbsDown className="h-4 w-4" />
                 </button>
-                <button 
+                <button
                   className="bg-white border border-gray-300 p-1.5 rounded-none flex items-center justify-center w-8 h-8"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
-                    console.log('Ticket', symbol);
+                    console.log("Ticket", symbol);
                   }}
                 >
                   <Ticket className="h-4 w-4" />
                 </button>
-                <button 
+                <button
                   className="bg-orange-500 text-white p-1.5 rounded-none flex items-center justify-center w-8 h-8"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
-                    console.log('Upvote', symbol);
+                    console.log("Upvote", symbol);
                   }}
                 >
                   <ThumbsUp className="h-4 w-4" />
                 </button>
               </div>
-              
+
               {/* Ticket Count */}
               <div className="flex items-center">
                 {isTopPerformer && <span className="text-yellow-500 mr-1">👑</span>}

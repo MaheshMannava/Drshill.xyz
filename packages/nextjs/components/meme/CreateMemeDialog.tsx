@@ -5,8 +5,8 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { ArrowLeft, Check, Upload } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import { ArrowLeft, Check, Upload } from "lucide-react";
 
 interface CreateMemeDialogProps {
   open: boolean;
@@ -14,11 +14,7 @@ interface CreateMemeDialogProps {
   walletAddress?: string;
 }
 
-export function CreateMemeDialog({
-  open,
-  onOpenChange,
-  walletAddress = "0x348879...",
-}: CreateMemeDialogProps) {
+export function CreateMemeDialog({ open, onOpenChange, walletAddress = "0x348879..." }: CreateMemeDialogProps) {
   const [formData, setFormData] = useState({
     tickerName: "",
     creatorName: "",
@@ -37,7 +33,7 @@ export function CreateMemeDialog({
     const file = e.target.files?.[0];
     if (file && file.size <= 1024 * 1024) {
       // 1MB
-      setFormData((prev) => ({ ...prev, image: file }));
+      setFormData(prev => ({ ...prev, image: file }));
     }
   };
 
@@ -49,12 +45,7 @@ export function CreateMemeDialog({
         {/* Content */}
         <div className="p-6 bg-[#FFFBE6]">
           <div className="flex items-center mb-6">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="mr-4"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button variant="ghost" size="icon" className="mr-4" onClick={() => onOpenChange(false)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex-1">
@@ -65,14 +56,12 @@ export function CreateMemeDialog({
 
           <div className="space-y-6">
             <div>
-              <Label className="text-sm font-medium mb-2 block">
-                TICKER NAME *
-              </Label>
+              <Label className="text-sm font-medium mb-2 block">TICKER NAME *</Label>
               <Input
                 className="bg-white border-gray-200"
                 value={formData.tickerName}
-                onChange={(e) =>
-                  setFormData((prev) => ({
+                onChange={e =>
+                  setFormData(prev => ({
                     ...prev,
                     tickerName: e.target.value,
                   }))
@@ -81,14 +70,12 @@ export function CreateMemeDialog({
             </div>
 
             <div>
-              <Label className="text-sm font-medium mb-2 block">
-                CREATOR NAME *
-              </Label>
+              <Label className="text-sm font-medium mb-2 block">CREATOR NAME *</Label>
               <Input
                 className="bg-white border-gray-200"
                 value={formData.creatorName}
-                onChange={(e) =>
-                  setFormData((prev) => ({
+                onChange={e =>
+                  setFormData(prev => ({
                     ...prev,
                     creatorName: e.target.value,
                   }))
@@ -97,14 +84,12 @@ export function CreateMemeDialog({
             </div>
 
             <div>
-              <Label className="text-sm font-medium mb-2 block">
-                MISSION STATEMENT *
-              </Label>
+              <Label className="text-sm font-medium mb-2 block">MISSION STATEMENT *</Label>
               <Textarea
                 className="bg-white border-gray-200 min-h-[100px]"
                 value={formData.missionStatement}
-                onChange={(e) =>
-                  setFormData((prev) => ({
+                onChange={e =>
+                  setFormData(prev => ({
                     ...prev,
                     missionStatement: e.target.value,
                   }))
@@ -120,9 +105,7 @@ export function CreateMemeDialog({
                   <Button
                     variant="ghost"
                     className="text-sm text-gray-600"
-                    onClick={() =>
-                      document.getElementById("file-upload")?.click()
-                    }
+                    onClick={() => document.getElementById("file-upload")?.click()}
                   >
                     SELECT FILE
                   </Button>
@@ -144,13 +127,9 @@ export function CreateMemeDialog({
                   <Button
                     variant="outline"
                     className={`h-12 w-12 rounded-lg border-2 border-gray-300 p-0 ${formData.isRug ? "bg-green-50" : "bg-white"}`}
-                    onClick={() =>
-                      setFormData((prev) => ({ ...prev, isRug: !prev.isRug }))
-                    }
+                    onClick={() => setFormData(prev => ({ ...prev, isRug: !prev.isRug }))}
                   >
-                    {formData.isRug && (
-                      <Check className="h-6 w-6 text-green-500" />
-                    )}
+                    {formData.isRug && <Check className="h-6 w-6 text-green-500" />}
                   </Button>
                 </div>
               </div>
@@ -159,10 +138,7 @@ export function CreateMemeDialog({
         </div>
         {/* Footer */}
         <div className="p-6 bg-[#FFFBE6]">
-          <Button
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12"
-            onClick={handleSubmit}
-          >
+          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12" onClick={handleSubmit}>
             SUBMIT
             <Upload className="h-5 w-5 ml-2" />
           </Button>
@@ -170,4 +146,4 @@ export function CreateMemeDialog({
       </DialogContent>
     </Dialog>
   );
-} 
+}

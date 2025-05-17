@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Header } from "~~/components/meme/Header";
 import { CreateMemeButton } from "~~/components/meme/CreateMemeButton";
-import { MemeCard } from "~~/components/meme/MemeCard";
+import { Header } from "~~/components/meme/Header";
 import { HowToShillDialog } from "~~/components/meme/HowToShillDialog";
+import { MemeCard } from "~~/components/meme/MemeCard";
 
 const memes = [
   {
     symbol: "PINP",
-    description:
-      "The coin that makes you a true individual. This should be a max of 3 lines of text...",
+    description: "The coin that makes you a true individual. This should be a max of 3 lines of text...",
     imageUrl: "/assets/pinp.png",
     ticketCount: 8045,
     isTopPerformer: true,
@@ -23,8 +22,7 @@ const memes = [
   },
   {
     symbol: "KERN",
-    description:
-      "The Opportunity you've all been waiting for. Invest at least 12 thumbs for good luck!",
+    description: "The Opportunity you've all been waiting for. Invest at least 12 thumbs for good luck!",
     imageUrl: "/assets/corn.png",
     ticketCount: 5,
   },
@@ -39,11 +37,8 @@ function Home() {
       <div className="px-4 py-8">
         <CreateMemeButton ticketCost={60} />
         <div className="w-full max-w-4xl mx-auto space-y-4">
-          {memes.map((meme) => (
-            <div 
-              key={meme.symbol} 
-              className="bg-white shadow"
-            >
+          {memes.map(meme => (
+            <div key={meme.symbol} className="bg-white shadow">
               <MemeCard {...meme} />
             </div>
           ))}
@@ -54,4 +49,4 @@ function Home() {
   );
 }
 
-export default Home; 
+export default Home;

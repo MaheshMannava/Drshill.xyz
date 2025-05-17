@@ -27,14 +27,14 @@ export default function CreateMemePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       // TODO: Implement actual meme creation with web3 integration
       console.log("Creating meme with data:", memeData);
-      
+
       // Simulate submission delay
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Redirect back to home page
       router.push("/");
     } catch (error) {
@@ -48,10 +48,10 @@ export default function CreateMemePage() {
   return (
     <div className="min-h-screen py-8 px-4 bg-[url('https://storage.googleapis.com/tempo-public-images/github%7C71592960-1739296617275-phil_bg_6png')]">
       <Header />
-      
+
       <div className="w-full max-w-xl mx-auto bg-white rounded-lg shadow-lg p-6 mt-8">
         <h1 className="text-2xl font-bold mb-6">Create Your Meme</h1>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="symbol" className="block text-sm font-medium mb-1">
@@ -68,7 +68,7 @@ export default function CreateMemePage() {
               required
             />
           </div>
-          
+
           <div className="mb-4">
             <label htmlFor="description" className="block text-sm font-medium mb-1">
               Description (max 100 characters)
@@ -84,7 +84,7 @@ export default function CreateMemePage() {
               required
             />
           </div>
-          
+
           <div className="mb-6">
             <label htmlFor="image" className="block text-sm font-medium mb-1">
               Meme Image
@@ -98,7 +98,7 @@ export default function CreateMemePage() {
               required
             />
           </div>
-          
+
           <div className="flex gap-4">
             <button
               type="button"
@@ -107,7 +107,7 @@ export default function CreateMemePage() {
             >
               Cancel
             </button>
-            
+
             <button
               type="submit"
               disabled={isSubmitting}
@@ -122,4 +122,4 @@ export default function CreateMemePage() {
       </div>
     </div>
   );
-} 
+}

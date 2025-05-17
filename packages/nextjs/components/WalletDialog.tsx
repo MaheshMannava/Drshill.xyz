@@ -1,19 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useConnect, useAccount, useDisconnect } from 'wagmi';
-import { Dialog, DialogContent } from "~~/components/ui/dialog";
+import { useEffect, useState } from "react";
 import { DialogPortal } from "@radix-ui/react-dialog";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { Dialog, DialogContent } from "~~/components/ui/dialog";
 
 interface WalletDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-export function WalletDialog({
-  open = false,
-  onOpenChange,
-}: WalletDialogProps) {
+export function WalletDialog({ open = false, onOpenChange }: WalletDialogProps) {
   const { connectors, connect, status: connectStatus, error: connectError } = useConnect();
   const { address: connectedAddress, isConnected, chain } = useAccount();
   const { disconnect } = useDisconnect();
@@ -23,20 +20,20 @@ export function WalletDialog({
   // Filter duplicate WalletConnect and remove Phantom wallet
   const filteredConnectors = connectors.filter((connector, index, self) => {
     // Filter out Phantom wallet
-    if (connector.name.toLowerCase().includes('phantom')) {
+    if (connector.name.toLowerCase().includes("phantom")) {
       return false;
     }
-    
+
     // For WalletConnect, only keep the first occurrence
-    if (connector.name.toLowerCase().includes('walletconnect')) {
-      return self.findIndex(c => c.name.toLowerCase().includes('walletconnect')) === index;
+    if (connector.name.toLowerCase().includes("walletconnect")) {
+      return self.findIndex(c => c.name.toLowerCase().includes("walletconnect")) === index;
     }
-    
+
     // For MetaMask, only keep the first occurrence
-    if (connector.name.toLowerCase().includes('metamask')) {
-      return self.findIndex(c => c.name.toLowerCase().includes('metamask')) === index;
+    if (connector.name.toLowerCase().includes("metamask")) {
+      return self.findIndex(c => c.name.toLowerCase().includes("metamask")) === index;
     }
-    
+
     return true;
   });
 
@@ -47,14 +44,14 @@ export function WalletDialog({
 
   const handleConnectWallet = async (connectorId: string) => {
     setUiMessage(null);
-    console.log('Attempting to connect with:', connectorId);
+    console.log("Attempting to connect with:", connectorId);
     try {
       const connector = connectors.find(c => c.id === connectorId);
-      if (!connector) throw new Error ("Connector not found");
+      if (!connector) throw new Error("Connector not found");
       await connect({ connector });
       onOpenChange?.(false);
     } catch (error: any) {
-      console.error('Failed to connect:', error);
+      console.error("Failed to connect:", error);
       const message = error.shortMessage || error.message || "Failed to connect wallet.";
       setUiMessage(message);
     }
@@ -67,10 +64,10 @@ export function WalletDialog({
 
   useEffect(() => {
     if (isConnected && open) {
-        setUiMessage(`Connected as: ${connectedAddress?.slice(0,6)}...${connectedAddress?.slice(-4)}`);
+      setUiMessage(`Connected as: ${connectedAddress?.slice(0, 6)}...${connectedAddress?.slice(-4)}`);
     }
     if (!isConnected) {
-        setUiMessage(null);
+      setUiMessage(null);
     }
   }, [isConnected, open, connectedAddress, onOpenChange]);
 
@@ -79,11 +76,11 @@ export function WalletDialog({
     setUiMessage(null);
     try {
       console.log("Burner wallet generation initiated (placeholder)");
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      await new Promise(resolve => setTimeout(resolve, 1000));
       onOpenChange?.(false);
       setUiMessage("Burner wallet (placeholder) connected.");
     } catch (error) {
-      console.error('Failed to generate burner wallet:', error);
+      console.error("Failed to generate burner wallet:", error);
       setUiMessage("Failed to generate burner wallet.");
     } finally {
       setIsBurnerLoading(false);
@@ -109,55 +106,54 @@ export function WalletDialog({
 
             {!isConnected && (
               <>
-            <div className="p-4 space-y-[6px] bg-[#a3a3a3]">
-              {filteredConnectors.map((connector) => (
-                <button
-                  key={connector.id}
+                <div className="p-4 space-y-[6px] bg-[#a3a3a3]">
+                  {filteredConnectors.map(connector => (
+                    <button
+                      key={connector.id}
                       onClick={() => handleConnectWallet(connector.id)}
-                      disabled={connectStatus === 'pending'}
-                  className="w-full h-12 px-4 hover:bg-gray-50 border border-[#E6E6E6] flex items-center justify-between font-serif bg-[#cfcfcf] disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
-                >
-                  <span>
-                    {connector.name.toUpperCase()}
-                        {connectStatus === 'pending' && " (connecting...)"}
-                  </span>
-                  <span className="text-lg">→</span>
-                </button>
-              ))}
-            </div>
+                      disabled={connectStatus === "pending"}
+                      className="w-full h-12 px-4 hover:bg-gray-50 border border-[#E6E6E6] flex items-center justify-between font-serif bg-[#cfcfcf] disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
+                    >
+                      <span>
+                        {connector.name.toUpperCase()}
+                        {connectStatus === "pending" && " (connecting...)"}
+                      </span>
+                      <span className="text-lg">→</span>
+                    </button>
+                  ))}
+                </div>
               </>
             )}
-            
-            {(isConnected || uiMessage) && (
-                 <div className="p-6 space-y-4 bg-[#a3a3a3] text-center">
-                    {uiMessage && <p className="font-serif text-sm text-[#333333]">{uiMessage}</p>}
-                    {isConnected && !uiMessage && (
-                        <p className="font-serif text-sm text-[#333333]">
-                            Connected: {connectedAddress?.slice(0,6)}...{connectedAddress?.slice(-4)}
-                        </p>
-                    )}
-                    <div className="flex flex-col gap-2">
-                      {isConnected && (
-                        <button
-                          onClick={handleDisconnect}
-                          className="w-full h-10 bg-red-500 hover:bg-red-600 text-white font-serif rounded-none"
-                        >
-                          DISCONNECT
-                        </button>
-                      )}
-                      <button
-                        onClick={handleDialogClose}
-                        className="w-full h-10 bg-gray-500 hover:bg-gray-600 text-white font-serif rounded-none"
-                      >
-                        CLOSE
-                      </button>
-                    </div>
-                 </div>
-            )}
 
+            {(isConnected || uiMessage) && (
+              <div className="p-6 space-y-4 bg-[#a3a3a3] text-center">
+                {uiMessage && <p className="font-serif text-sm text-[#333333]">{uiMessage}</p>}
+                {isConnected && !uiMessage && (
+                  <p className="font-serif text-sm text-[#333333]">
+                    Connected: {connectedAddress?.slice(0, 6)}...{connectedAddress?.slice(-4)}
+                  </p>
+                )}
+                <div className="flex flex-col gap-2">
+                  {isConnected && (
+                    <button
+                      onClick={handleDisconnect}
+                      className="w-full h-10 bg-red-500 hover:bg-red-600 text-white font-serif rounded-none"
+                    >
+                      DISCONNECT
+                    </button>
+                  )}
+                  <button
+                    onClick={handleDialogClose}
+                    className="w-full h-10 bg-gray-500 hover:bg-gray-600 text-white font-serif rounded-none"
+                  >
+                    CLOSE
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </DialogPortal>
     </Dialog>
   );
-} 
+}

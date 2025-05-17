@@ -1,18 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { DialogPortal } from "@radix-ui/react-dialog";
-import Image from 'next/image';
 
 interface HowToShillDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-export function HowToShillDialog({
-  open = true,
-  onOpenChange,
-}: HowToShillDialogProps) {
+export function HowToShillDialog({ open = true, onOpenChange }: HowToShillDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
@@ -69,29 +66,24 @@ export function HowToShillDialog({
                 </p>
 
                 <p className="text-sm">
-                  SUBMIT A MEME FOR <span className="font-bold">60</span>{" "}
-                  TICKETS.
+                  SUBMIT A MEME FOR <span className="font-bold">60</span> TICKETS.
                 </p>
 
                 <p className="text-sm">
-                  VOTE ON MEMES (THUMBS UP OR DOWN). IT COSTS{" "}
-                  <span className="font-bold">1</span> TICKET PER VOTE.
+                  VOTE ON MEMES (THUMBS UP OR DOWN). IT COSTS <span className="font-bold">1</span> TICKET PER VOTE.
                 </p>
 
                 <p className="text-sm">
-                  AT THE END OF THE DAY, THE MEME WITH THE MOST VOTES WILL BE
-                  MINTED AS A MEMECOIN ON THE{" "}
+                  AT THE END OF THE DAY, THE MEME WITH THE MOST VOTES WILL BE MINTED AS A MEMECOIN ON THE{" "}
                   <span className="font-bold text-blue-600">CORN NETWORK</span>.
                 </p>
 
                 <p className="text-sm">
-                  IF YOU VOTED THUMBS UP ON THE WINNER, YOU'LL RECEIVE A
-                  PROPORTIONAL SHARE OF THE NEW MEMECOIN.
+                  IF YOU VOTED THUMBS UP ON THE WINNER, YOU'LL RECEIVE A PROPORTIONAL SHARE OF THE NEW MEMECOIN.
                 </p>
 
                 <p className="text-sm">
-                  THE MEME CREATOR GETS <span className="font-bold">30%</span>{" "}
-                  OF THE TOTAL SUPPLY.
+                  THE MEME CREATOR GETS <span className="font-bold">30%</span> OF THE TOTAL SUPPLY.
                 </p>
               </div>
             </div>
@@ -110,4 +102,4 @@ export function HowToShillDialog({
       </DialogPortal>
     </Dialog>
   );
-} 
+}
