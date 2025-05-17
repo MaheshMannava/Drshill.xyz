@@ -1,4 +1,4 @@
 {
   "installCommand": "yarn install --mode=skip-build",
   "buildCommand": "yarn build"
-}
+} 
