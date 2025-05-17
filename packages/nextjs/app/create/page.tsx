@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
-import { Header } from "~~/components/meme/Header";
+import dynamic from "next/dynamic";
+
+// Dynamically import Header with ssr: false
+const Header = dynamic(() => import("~~/components/meme/Header").then(mod => mod.Header), { 
+  ssr: false,
+  loading: () => <div className="h-[68px] mb-4 px-4">Loading Header...</div>, // Basic placeholder
+});
 
 export default function CreateMemePage() {
   const router = useRouter();
@@ -48,7 +54,9 @@ export default function CreateMemePage() {
 
   return (
     <div className="min-h-screen py-8 px-4 bg-[url('https://storage.googleapis.com/tempo-public-images/github%7C71592960-1739296617275-phil_bg_6png')]">
-      <Header />
+      <Suspense fallback={<div className="h-[68px] mb-4 px-4">Loading Header...</div>}>
+        <Header />
+      </Suspense>
 
       <div className="w-full max-w-xl mx-auto bg-white rounded-lg shadow-lg p-6 mt-8">
         <h1 className="text-2xl font-bold mb-6">Create Your Meme</h1>

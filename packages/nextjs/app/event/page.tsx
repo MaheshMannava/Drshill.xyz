@@ -2,10 +2,16 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { CreateMemeButton } from "~~/components/meme/CreateMemeButton";
-import { Header } from "~~/components/meme/Header";
 import { HowToShillDialog } from "~~/components/meme/HowToShillDialog";
 import { MemeCard } from "~~/components/meme/MemeCard";
+
+// Dynamically import Header with ssr: false
+const Header = dynamic(() => import("~~/components/meme/Header").then(mod => mod.Header), { 
+  ssr: false,
+  loading: () => <div className="h-[68px] mb-4 px-4">Loading Header...</div>, // Basic placeholder for header height
+});
 
 // Mock memes data
 const memes = [
@@ -47,13 +53,10 @@ function EventPageContents() {
   // If no event ID is present, show an error message
   if (!eventId) {
     return (
-      <div className="min-h-screen py-0 px-0 bg-[url('https://storage.googleapis.com/tempo-public-images/github%7C71592960-1739296617275-phil_bg_6png')]">
-        <Header />
-        <div className="px-4 py-8">
-          <div className="w-full max-w-4xl mx-auto p-6 bg-white shadow text-center">
-            <h1 className="text-2xl font-bold mb-4">Invalid Event</h1>
-            <p className="text-gray-600">No event ID was provided. Please scan a valid QR code to join an event.</p>
-          </div>
+      <div className="px-4 py-8">
+        <div className="w-full max-w-4xl mx-auto p-6 bg-white shadow text-center">
+          <h1 className="text-2xl font-bold mb-4">Invalid Event</h1>
+          <p className="text-gray-600">No event ID was provided. Please scan a valid QR code to join an event.</p>
         </div>
       </div>
     );
@@ -61,7 +64,9 @@ function EventPageContents() {
 
   return (
     <div className="min-h-screen py-0 px-0 bg-[url('https://storage.googleapis.com/tempo-public-images/github%7C71592960-1739296617275-phil_bg_6png')]">
-      <Header />
+      <Suspense fallback={<div className="h-[68px] mb-4 px-4">Loading Header...</div>}> 
+        <Header />
+      </Suspense>
       <div className="px-4 py-8">
         <div className="w-full max-w-4xl mx-auto mb-6 p-4 bg-white shadow">
           <h1 className="text-xl font-serif">Event: {eventId}</h1>
@@ -84,8 +89,13 @@ function EventPageContents() {
 
 export default function EventPage() {
   return (
-    <Suspense fallback={<div>Loading event...</div>}>
-      <EventPageContents />
-    </Suspense>
+    <div className="min-h-screen py-0 px-0 bg-[url('https://storage.googleapis.com/tempo-public-images/github%7C71592960-1739296617275-phil_bg_6png')]">
+      <Suspense fallback={<div className="h-[68px] mb-4 px-4">Loading Header...</div>}> 
+        <Header />
+      </Suspense>
+      <Suspense fallback={<div>Loading event details...</div>}> 
+        <EventPageContents />
+      </Suspense>
+    </div>
   );
 }
