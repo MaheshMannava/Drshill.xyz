@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { CreateMemeDialog } from "./CreateMemeDialog";
 import { Plus, Ticket } from "lucide-react";
-import { useAccount } from "wagmi";
 
 interface CreateMemeButtonProps {
   ticketCost?: number;
@@ -13,7 +12,6 @@ interface CreateMemeButtonProps {
 
 export function CreateMemeButton({ ticketCost = 60 }: CreateMemeButtonProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { address } = useAccount();
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-6">
@@ -32,7 +30,7 @@ export function CreateMemeButton({ ticketCost = 60 }: CreateMemeButtonProps) {
           </Button>
         </div>
       </Card>
-      <CreateMemeDialog open={dialogOpen} onOpenChange={setDialogOpen} walletAddress={address} />
+      <CreateMemeDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }

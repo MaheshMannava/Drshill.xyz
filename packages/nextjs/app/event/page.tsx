@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CreateMemeButton } from "~~/components/meme/CreateMemeButton";
 import { Header } from "~~/components/meme/Header";
@@ -30,7 +30,8 @@ const memes = [
   },
 ];
 
-export default function EventPage() {
+// New component to handle search params and main content
+function EventPageContents() {
   const [showHowTo, setShowHowTo] = useState(true);
   const searchParams = useSearchParams();
   const eventId = searchParams?.get("id") || null;
@@ -78,5 +79,13 @@ export default function EventPage() {
       </div>
       <HowToShillDialog open={showHowTo} onOpenChange={setShowHowTo} />
     </div>
+  );
+}
+
+export default function EventPage() {
+  return (
+    <Suspense fallback={<div>Loading event...</div>}>
+      <EventPageContents />
+    </Suspense>
   );
 }

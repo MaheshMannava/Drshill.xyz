@@ -7,7 +7,6 @@ export const useIsOwner = () => {
   const { data: owner } = useScaffoldReadContract({
     contractName: "CropCircle",
     functionName: "owner",
-    enabled: Boolean(address),
   });
 
   return {

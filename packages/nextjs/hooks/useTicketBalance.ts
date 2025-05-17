@@ -1,5 +1,5 @@
 import { useAccount } from 'wagmi';
-import { useScaffoldContract, useScaffoldReadContract } from '~~/hooks/scaffold-eth';
+import { useScaffoldReadContract } from '~~/hooks/scaffold-eth';
 import { useEventStore } from '~~/hooks/useEventStore';
 
 export const useTicketBalance = () => {
@@ -8,19 +8,17 @@ export const useTicketBalance = () => {
   
   // Get token balance for the connected user
   const { data: balance, isLoading, refetch } = useScaffoldReadContract({
-    contractName: "CropCircle",
-    functionName: "getTokenBalance",
-    args: address ? [address] : undefined,
-    enabled: Boolean(isConnected && address),
+    contractName: "CropToken",
+    functionName: "balanceOf",
+    args: address ? [address] : [undefined],
     watch: true,
   });
 
   // Check if user has claimed tokens for this event
   const { data: claimedStatus } = useScaffoldReadContract({
     contractName: "CropCircle",
-    functionName: "hasClaimedTokens",
-    args: currentEventId && address ? [currentEventId, address] : undefined,
-    enabled: Boolean(isConnected && address && currentEventId),
+    functionName: "hasUserClaimedTokens" as any,
+    args: (currentEventId && address ? [currentEventId, address] as const : undefined) as any,
   });
 
   // Convert bigint to number with proper decimal formatting

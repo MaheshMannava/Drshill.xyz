@@ -52,120 +52,142 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
     query: { enabled: !!txHash },
   });
 
-  // Improved robust method to extract event ID
-  const extractEventIdFromLogs = (logs: any[]) => {
-    if (!logs || logs.length === 0) {
-      console.error("No logs found in transaction receipt");
-      return null;
-    }
-
-    console.log("All transaction logs:", logs);
-
-    // First attempt: Look for EventCreated event using decodeEventLog
-    for (const log of logs) {
-      try {
-        // Only attempt to decode logs from our CropCircle contract
-        const cropCircleAddress = logs[0]?.address; // Assuming all logs are from the same contract in this tx
-        if (log.address !== cropCircleAddress) continue;
-
-        const decodedLog = decodeEventLog({
-          abi: cropCircleAbi as Abi,
-          data: log.data,
-          topics: log.topics,
-        });
-
-        console.log("Successfully decoded log:", decodedLog);
-
-        if (decodedLog.eventName === "EventCreated") {
-          const eventIdArg = (decodedLog.args as any).eventId;
-          if (typeof eventIdArg === "string" && eventIdArg.startsWith("0x") && eventIdArg.length === 66) {
-            console.log("Found event ID in decoded log:", eventIdArg);
-            return eventIdArg;
-          }
-        }
-      } catch (error) {
-        console.warn("Error decoding log, trying next method:", error);
-      }
-    }
-
-    // Second attempt: Look for the EventCreated signature in topics
-    // keccak256("EventCreated(bytes32,uint256,uint256,bytes32)")
-    const eventCreatedSignature = "0xf12c9274369a83fc4dae0cadd7853adac11a4a24c285e7f2e1313dc4fec5a07a";
-    for (const log of logs) {
-      if (log.topics && log.topics[0] === eventCreatedSignature && log.topics.length > 1) {
-        // The first indexed param (eventId) should be in topics[1]
-        const rawEventId = log.topics[1];
-        if (rawEventId && typeof rawEventId === "string" && rawEventId.startsWith("0x")) {
-          console.log("Found event ID in topics:", rawEventId);
-          return rawEventId;
-        }
-      }
-    }
-
-    // Direct approach - try to get the return value of createEvent
-    // In case the function output was returned but not captured in events
-    try {
-      // Use the contract function directly instead of relying on events
-      if (receipt && receipt.status === "success" && receipt.effectiveGasPrice) {
-        return localStorage.getItem("lastAttemptedEventId");
-      }
-    } catch (error) {
-      console.error("Error extracting event ID from contract function:", error);
-    }
-
-    // Last fallback: Check for any bytes32 in topics
-    console.warn("Falling back to searching for any bytes32 in topics - this is less reliable");
-    for (const log of logs) {
-      if (log.topics && log.topics.length > 0) {
-        for (const topic of log.topics) {
-          if (
-            typeof topic === "string" &&
-            topic.startsWith("0x") &&
-            topic.length === 66 &&
-            topic !== eventCreatedSignature
-          ) {
-            // Exclude the event signature itself
-            console.log("Found potential event ID in raw topics:", topic);
-            return topic;
-          }
-        }
-      }
-    }
-
-    return null;
-  };
-
   // Effect to process receipt and extract eventId
   useEffect(() => {
-    if (isReceiptConfirmed && receipt) {
-      console.log("Transaction confirmed, receipt:", receipt);
-      setIsParsingLogs(true);
+    // Improved robust method to extract event ID
+    const extractEventIdFromLogs = (logs: any[]) => {
+      if (!logs || logs.length === 0) {
+        console.error("No logs found in transaction receipt");
+        return null;
+      }
 
-      try {
-        const extractedEventId = extractEventIdFromLogs(receipt.logs);
+      console.log("All transaction logs:", logs);
 
-        if (extractedEventId) {
-          console.log("Successfully extracted Event ID:", extractedEventId);
+      // First attempt: Look for EventCreated event using decodeEventLog
+      for (const log of logs) {
+        try {
+          // Only attempt to decode logs from our CropCircle contract
+          const cropCircleAddress = logs[0]?.address; // Assuming all logs are from the same contract in this tx
+          if (log.address !== cropCircleAddress) continue;
 
-          // Store the event ID to avoid duplicates
-          localStorage.removeItem("lastAttemptedEventId");
+          const decodedLog = decodeEventLog({
+            abi: cropCircleAbi as Abi,
+            data: log.data,
+            topics: log.topics,
+          });
 
-          setConfirmedEventId(extractedEventId);
-          const baseUrl = window.location.origin;
-          const newEventUrl = `${baseUrl}/event?id=${extractedEventId}`;
-          setConfirmedEventUrl(newEventUrl);
-          if (onEventCreated) {
-            onEventCreated(extractedEventId);
+          console.log("Successfully decoded log:", decodedLog);
+
+          if (decodedLog.eventName === "EventCreated") {
+            const eventIdArg = (decodedLog.args as any).eventId;
+            if (typeof eventIdArg === "string" && eventIdArg.startsWith("0x") && eventIdArg.length === 66) {
+              console.log("Found event ID in decoded log:", eventIdArg);
+              return eventIdArg;
+            }
           }
-          setIsParsingLogs(false);
-        } else if (retryCount < 3) {
-          // Retry a few times with a slight delay
-          console.log(`Retrying event ID extraction (${retryCount + 1}/3)...`);
-          setTimeout(() => {
-            setRetryCount(prev => prev + 1);
-          }, 2000);
+        } catch (error) {
+          console.warn("Error decoding log, trying next method:", error);
+        }
+      }
+
+      // Second attempt: Look for the EventCreated signature in topics
+      // keccak256("EventCreated(bytes32,uint256,uint256,bytes32)")
+      const eventCreatedSignature = "0xf12c9274369a83fc4dae0cadd7853adac11a4a24c285e7f2e1313dc4fec5a07a";
+      for (const log of logs) {
+        if (log.topics && log.topics[0] === eventCreatedSignature && log.topics.length > 1) {
+          // The first indexed param (eventId) should be in topics[1]
+          const rawEventId = log.topics[1];
+          if (rawEventId && typeof rawEventId === "string" && rawEventId.startsWith("0x")) {
+            console.log("Found event ID in topics:", rawEventId);
+            return rawEventId;
+          }
+        }
+      }
+
+      // Direct approach - try to get the return value of createEvent
+      // In case the function output was returned but not captured in events
+      try {
+        // Use the contract function directly instead of relying on events
+        if (receipt && receipt.status === "success" && receipt.effectiveGasPrice) {
+          return localStorage.getItem("lastAttemptedEventId");
+        }
+      } catch (error) {
+        console.error("Error extracting event ID from contract function:", error);
+      }
+
+      // Last fallback: Check for any bytes32 in topics
+      console.warn("Falling back to searching for any bytes32 in topics - this is less reliable");
+      for (const log of logs) {
+        if (log.topics && log.topics.length > 0) {
+          for (const topic of log.topics) {
+            if (
+              typeof topic === "string" &&
+              topic.startsWith("0x") &&
+              topic.length === 66 &&
+              topic !== eventCreatedSignature
+            ) {
+              // Exclude the event signature itself
+              console.log("Potential event ID in raw topics:", topic);
+              return topic;
+            }
+          }
+        }
+      }
+
+      return null;
+    };
+
+    if (isReceiptConfirmed && receipt && txHash) {
+      // Extract event ID from transaction receipt logs
+      setIsParsingLogs(true);
+      try {
+        if (Array.isArray(receipt?.logs) && receipt.logs.length > 0) {
+          console.log("Logs found in receipt:", receipt.logs);
+
+          // Try to parse event ID from logs
+          const eventId = extractEventIdFromLogs(receipt.logs);
+
+          // If we found an eventId, call the onEventCreated callback and clear state
+          if (eventId) {
+            console.log("Found event ID:", eventId);
+
+            // Save to localStorage with success status
+            localStorage.setItem("lastAttemptedEventId", eventId);
+
+            // Create an event URL and set state
+            const baseUrl = window.location.origin;
+            const eventUrl = `${baseUrl}/event?id=${eventId}`;
+            setConfirmedEventId(eventId);
+            setConfirmedEventUrl(eventUrl);
+
+            // Call the onEventCreated callback from props
+            if (onEventCreated) {
+              onEventCreated(eventId);
+            }
+
+            setIsParsingLogs(false);
+          } else if (retryCount < 2) {
+            // If we couldn't find the event ID in the logs, increment retry count
+            console.log("No event ID found in logs, retrying...");
+            setRetryCount(prevCount => prevCount + 1);
+
+            // Wait a moment and try again by forcing a state update
+            setTimeout(() => {
+              setRetryCount(prevCount => {
+                console.log("Automatic retry", prevCount + 1);
+                return prevCount; // Just trigger a re-render
+              });
+            }, 2000);
+          } else {
+            // After 3 attempts (retryCount 0, 1, 2), give up
+            console.log("Failed to extract event ID after multiple attempts");
+            setIsParsingLogs(false);
+            alert(
+              "Could not extract event ID from transaction. Please check if the event was created and try again if needed.",
+            );
+          }
         } else {
-          console.error("Failed to extract event ID after multiple attempts");
+          console.log("No logs found in receipt or receipt format unexpected");
           setIsParsingLogs(false);
 
           // At this point, we could ask the user to check the transaction on a block explorer

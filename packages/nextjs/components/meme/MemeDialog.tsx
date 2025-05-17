@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { ThumbsDown, ThumbsUp, Ticket } from "lucide-react";
 
 interface MemeDialogProps {
@@ -59,8 +60,8 @@ export const MemeDialog: React.FC<MemeDialogProps> = ({
         <div className="p-4 border-b border-gray-200">
           <div className="flex gap-4">
             {/* Meme Image */}
-            <div className="w-20 h-20 bg-gray-100 flex-shrink-0">
-              <img src={imageUrl} alt={symbol} className="w-full h-full object-contain" />
+            <div className="w-20 h-20 bg-gray-100 flex-shrink-0 relative">
+              <Image src={imageUrl} alt={symbol} fill className="object-contain" sizes="80px" />
             </div>
 
             {/* Description and Action Buttons */}

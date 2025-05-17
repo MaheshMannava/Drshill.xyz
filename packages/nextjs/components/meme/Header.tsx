@@ -6,9 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { CreateEventDialog } from "./CreateEventDialog";
 import { ethers } from "ethers";
 import { Gift, Key, PlusCircle, Ticket } from "lucide-react";
-import { parseAbi } from "viem";
 import { useAccount, useDisconnect } from "wagmi";
-import { getPublicClient, getWalletClient, writeContract } from "wagmi/actions";
 import { WalletDialog } from "~~/components/WalletDialog";
 import { useDeployedContractInfo, useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
@@ -148,8 +146,8 @@ export const Header: React.FC = () => {
 
   const { writeContractAsync: provideInitialTokens, isPending: isClaimWritePending } =
     useScaffoldWriteContract("CropCircle");
-  const { writeContractAsync: refillTokensFunction, isPending: isRefillPending } =
-    useScaffoldWriteContract("CropCircle");
+  // We need the refill pending state but don't directly use the function (it's used via ethers.js)
+  const { isPending: isRefillPending } = useScaffoldWriteContract("CropCircle");
   const { writeContractAsync: approveTokensFunction, isPending: isApproving } = useScaffoldWriteContract("CropToken");
 
   // Add a user token balance check

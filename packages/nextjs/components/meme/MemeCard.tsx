@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { MemeDialog } from "./MemeDialog";
 import { ThumbsDown, ThumbsUp, Ticket } from "lucide-react";
 
@@ -29,8 +30,8 @@ export const MemeCard: React.FC<MemeCardProps> = ({
       >
         <div className="flex gap-4">
           {/* Image */}
-          <div className="w-20 h-20 bg-gray-100 flex-shrink-0">
-            <img src={imageUrl} alt={`${symbol} meme`} className="w-full h-full object-cover" />
+          <div className="w-20 h-20 bg-gray-100 flex-shrink-0 relative">
+            <Image src={imageUrl} alt={`${symbol} meme`} fill className="object-cover" sizes="80px" />
           </div>
 
           {/* Content */}

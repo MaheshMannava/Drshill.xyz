@@ -11,10 +11,9 @@ import { ArrowLeft, Check, Upload } from "lucide-react";
 interface CreateMemeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  walletAddress?: string;
 }
 
-export function CreateMemeDialog({ open, onOpenChange, walletAddress = "0x348879..." }: CreateMemeDialogProps) {
+export function CreateMemeDialog({ open, onOpenChange }: CreateMemeDialogProps) {
   const [formData, setFormData] = useState({
     tickerName: "",
     creatorName: "",

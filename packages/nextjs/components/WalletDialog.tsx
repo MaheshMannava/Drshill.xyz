@@ -11,10 +11,9 @@ interface WalletDialogProps {
 }
 
 export function WalletDialog({ open = false, onOpenChange }: WalletDialogProps) {
-  const { connectors, connect, status: connectStatus, error: connectError } = useConnect();
-  const { address: connectedAddress, isConnected, chain } = useAccount();
+  const { connectors, connect, status: connectStatus } = useConnect();
+  const { address: connectedAddress, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-  const [isBurnerLoading, setIsBurnerLoading] = useState(false);
   const [uiMessage, setUiMessage] = useState<string | null>(null);
 
   // Filter duplicate WalletConnect and remove Phantom wallet
@@ -71,21 +70,8 @@ export function WalletDialog({ open = false, onOpenChange }: WalletDialogProps) 
     }
   }, [isConnected, open, connectedAddress, onOpenChange]);
 
-  const handleBurnerWallet = async () => {
-    setIsBurnerLoading(true);
-    setUiMessage(null);
-    try {
-      console.log("Burner wallet generation initiated (placeholder)");
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      onOpenChange?.(false);
-      setUiMessage("Burner wallet (placeholder) connected.");
-    } catch (error) {
-      console.error("Failed to generate burner wallet:", error);
-      setUiMessage("Failed to generate burner wallet.");
-    } finally {
-      setIsBurnerLoading(false);
-    }
-  };
+  // Burner wallet functionality removed to fix linting errors
+  // Will be implemented in a future version
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>

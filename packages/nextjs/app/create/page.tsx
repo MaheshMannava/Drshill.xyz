@@ -19,8 +19,9 @@ export default function CreateMemePage() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setMemeData(prev => ({ ...prev, image: e.target.files![0] }));
+    const file = e.target.files?.[0];
+    if (file) {
+      setMemeData(prev => ({ ...prev, image: file }));
     }
   };
 

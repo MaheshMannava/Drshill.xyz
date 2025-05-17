@@ -44,7 +44,7 @@ export function HowToShillDialog({ open = true, onOpenChange }: HowToShillDialog
               <div className="p-3 rounded-lg mb-6 relative font-serif bg-[#efefef]">
                 <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-[8px] border-l-[#FFFBE6] border-y-[6px] border-y-transparent" />
                 <p className="font-comic text-sm font-serif">
-                  "YUH GOT TO TAKE RESPONSIBILITY FOR YOUR TICKETS, MUCHACHO."
+                  &quot;YUH GOT TO TAKE RESPONSIBILITY FOR YOUR TICKETS, MUCHACHO.&quot;
                 </p>
               </div>
 
@@ -79,7 +79,7 @@ export function HowToShillDialog({ open = true, onOpenChange }: HowToShillDialog
                 </p>
 
                 <p className="text-sm">
-                  IF YOU VOTED THUMBS UP ON THE WINNER, YOU'LL RECEIVE A PROPORTIONAL SHARE OF THE NEW MEMECOIN.
+                  IF YOU VOTED THUMBS UP ON THE WINNER, YOU&apos;LL RECEIVE A PROPORTIONAL SHARE OF THE NEW MEMECOIN.
                 </p>
 
                 <p className="text-sm">
