@@ -76,15 +76,15 @@ export function WalletDialog({ open = false, onOpenChange }: WalletDialogProps) 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogPortal>
-        <DialogContent className="max-w-[440px] p-0 gap-0 bg-[#E6E6E6] border-0 rounded-none">
-          <div className="m-3 shadow-[2px_2px_4px_rgba(0,0,0,0.05)] bg-[#cdcdcd]">
+        <DialogContent className="max-w-[440px] p-0 gap-0 bg-[#bcbcbc] border-0 rounded-none">
+          <div className="m-3 shadow-[2px_2px_4px_rgba(0,0,0,0.05)] bg-[#bcbcbc]">
             <div className="p-4 flex items-center justify-between border-b border-[#E6E6E6]">
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-serif">🗝️ CONNECT WALLET</h2>
+                <h2 className="text-xl font-serif text-black">🗝️ CONNECT WALLET</h2>
               </div>
               <button
                 onClick={handleDialogClose}
-                className="w-8 h-8 flex items-center justify-center text-xl hover:bg-black/5 disabled:opacity-50"
+                className="w-8 h-8 flex items-center justify-center text-xl hover:bg-black/5 disabled:opacity-50 text-black"
               >
                 ×
               </button>
@@ -92,13 +92,13 @@ export function WalletDialog({ open = false, onOpenChange }: WalletDialogProps) 
 
             {!isConnected && (
               <>
-                <div className="p-4 space-y-[6px] bg-[#a3a3a3]">
+                <div className="p-4 space-y-[6px] bg-[#bcbcbc]">
                   {filteredConnectors.map(connector => (
                     <button
                       key={connector.id}
                       onClick={() => handleConnectWallet(connector.id)}
                       disabled={connectStatus === "pending"}
-                      className="w-full h-12 px-4 hover:bg-gray-50 border border-[#E6E6E6] flex items-center justify-between font-serif bg-[#cfcfcf] disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
+                      className="w-full h-12 px-4 hover:bg-[#efefef] border border-[#E6E6E6] flex items-center justify-between font-serif bg-[#bcbcbc] text-black disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
                     >
                       <span>
                         {connector.name.toUpperCase()}
@@ -112,10 +112,10 @@ export function WalletDialog({ open = false, onOpenChange }: WalletDialogProps) 
             )}
 
             {(isConnected || uiMessage) && (
-              <div className="p-6 space-y-4 bg-[#a3a3a3] text-center">
-                {uiMessage && <p className="font-serif text-sm text-[#333333]">{uiMessage}</p>}
+              <div className="p-6 space-y-4 bg-[#bcbcbc] text-center">
+                {uiMessage && <p className="font-serif text-sm text-black font-medium">{uiMessage}</p>}
                 {isConnected && !uiMessage && (
-                  <p className="font-serif text-sm text-[#333333]">
+                  <p className="font-serif text-sm text-black font-medium">
                     Connected: {connectedAddress?.slice(0, 6)}...{connectedAddress?.slice(-4)}
                   </p>
                 )}
@@ -130,7 +130,7 @@ export function WalletDialog({ open = false, onOpenChange }: WalletDialogProps) 
                   )}
                   <button
                     onClick={handleDialogClose}
-                    className="w-full h-10 bg-gray-500 hover:bg-gray-600 text-white font-serif rounded-none"
+                    className="w-full h-10 bg-[#2563EB] hover:bg-blue-700 text-white font-serif rounded-none"
                   >
                     CLOSE
                   </button>

@@ -273,13 +273,13 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
   if (!isOwner && displayStep === "form") {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
-            <DialogTitle className="text-center">Permission Denied</DialogTitle>
+            <DialogTitle className="text-center text-black font-medium">Permission Denied</DialogTitle>
           </DialogHeader>
           <div className="p-6 text-center">
-            <p className="text-red-500 mb-4">Only the contract owner can create events.</p>
-            <Button onClick={() => onOpenChange(false)} className="w-full bg-gray-600 hover:bg-gray-700">
+            <p className="text-red-500 font-medium mb-4">Only the contract owner can create events.</p>
+            <Button onClick={() => onOpenChange(false)} className="w-full bg-gray-600 hover:bg-gray-700 text-white">
               Close
             </Button>
           </div>
@@ -290,9 +290,9 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white text-black">
         <DialogHeader>
-          <DialogTitle className="text-center">
+          <DialogTitle className="text-center text-black font-medium">
             {displayStep === "form" && "Create New Event"}
             {displayStep === "pending" && "Event Creation Pending"}
             {displayStep === "extracting_event_id" && "Extracting Event Information"}
@@ -304,7 +304,7 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
         {displayStep === "form" && (
           <div className="space-y-4 pt-4">
             <div className="space-y-2">
-              <label htmlFor="duration" className="block text-sm font-medium">
+              <label htmlFor="duration" className="block text-sm font-medium text-black">
                 Event Duration (hours)
               </label>
               <Input
@@ -314,13 +314,13 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
                 value={duration}
                 onChange={e => setDuration(e.target.value)}
                 placeholder="24"
-                className="w-full"
+                className="w-full text-black"
               />
             </div>
             <Button
               onClick={handleCreateEvent}
               disabled={isSubmitting}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
             >
               {isSubmitting ? "Submitting..." : "Create Event"}
             </Button>
@@ -331,13 +331,13 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
           <div className="space-y-4 py-4 text-center">
             <div className="flex justify-center flex-col items-center">
               <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" />
-              <h3 className="font-medium text-lg">Transaction Processing</h3>
+              <h3 className="font-medium text-lg text-black">Transaction Processing</h3>
             </div>
-            <p className="text-sm text-gray-600">Your event creation transaction is being processed.</p>
-            <div className="text-xs bg-gray-100 p-2 rounded break-all whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="text-sm text-gray-800">Your event creation transaction is being processed.</p>
+            <div className="text-xs bg-white p-2 border border-gray-200 rounded break-all whitespace-nowrap overflow-hidden text-ellipsis text-black">
               Tx Hash: {txHash}
             </div>
-            <p className="text-xs text-amber-600 mt-2">Waiting for blockchain confirmation...</p>
+            <p className="text-xs text-amber-600 font-medium mt-2">Waiting for blockchain confirmation...</p>
           </div>
         )}
 
@@ -345,13 +345,13 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
           <div className="space-y-4 py-4 text-center">
             <div className="flex justify-center flex-col items-center">
               <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" />
-              <h3 className="font-medium text-lg">Extracting Event ID</h3>
+              <h3 className="font-medium text-lg text-black">Extracting Event ID</h3>
             </div>
-            <p className="text-sm text-gray-600">Transaction confirmed! Now retrieving the event details.</p>
-            <div className="text-xs bg-gray-100 p-2 rounded break-all whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="text-sm text-gray-800">Transaction confirmed! Now retrieving the event details.</p>
+            <div className="text-xs bg-white p-2 border border-gray-200 rounded break-all whitespace-nowrap overflow-hidden text-ellipsis text-black">
               Tx Hash: {txHash}
             </div>
-            <p className="text-xs text-amber-600 mt-2">Attempt {retryCount + 1}/3...</p>
+            <p className="text-xs text-amber-600 font-medium mt-2">Attempt {retryCount + 1}/3...</p>
           </div>
         )}
 
@@ -361,11 +361,11 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
               <AlertTriangle className="h-12 w-12 text-red-500 mb-4" />
               <h3 className="font-medium text-lg text-red-600">Transaction Confirmation Failed</h3>
             </div>
-            <p className="text-sm text-gray-600">There was an issue confirming your transaction on the blockchain.</p>
-            <div className="text-xs bg-gray-100 p-2 rounded break-all whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="text-sm text-gray-800">There was an issue confirming your transaction on the blockchain.</p>
+            <div className="text-xs bg-white p-2 border border-gray-200 rounded break-all whitespace-nowrap overflow-hidden text-ellipsis text-black">
               Tx Hash: {txHash}
             </div>
-            <p className="text-xs text-red-500 mt-2">
+            <p className="text-xs text-red-500 font-medium mt-2">
               Please check your wallet for more details or try creating the event again.
             </p>
             <Button
@@ -375,7 +375,7 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
               }}
               variant="outline"
               size="sm"
-              className="mt-4"
+              className="mt-4 text-black border-gray-300 hover:bg-gray-100"
             >
               Try Again
             </Button>
@@ -389,18 +389,18 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
                 <QRCodeSVG value={confirmedEventUrl} size={200} />
               </div>
             </div>
-            <p className="text-sm text-gray-600">Event created! Share this URL.</p>
-            <div className="text-xs bg-gray-100 p-2 rounded break-all whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="text-sm font-medium text-black">Event created! Share this URL.</p>
+            <div className="text-xs bg-white p-2 rounded border border-gray-200 break-all whitespace-nowrap overflow-hidden text-ellipsis text-black">
               {confirmedEventUrl}
             </div>
-            <p className="text-xs text-gray-500 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="text-xs text-gray-800 font-medium mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
               Event ID: {confirmedEventId}
             </p>
             <Button
               onClick={() => navigator.clipboard.writeText(confirmedEventUrl)}
               variant="outline"
               size="sm"
-              className="mt-2"
+              className="mt-2 border-gray-300 text-black hover:bg-gray-100"
             >
               Copy Link
             </Button>
