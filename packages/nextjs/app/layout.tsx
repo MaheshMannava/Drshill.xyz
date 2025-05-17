@@ -3,9 +3,9 @@ import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithPro
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
-export const metadata = getMetadata({ 
-  title: "Dr Shill", 
-  description: "Dr Shill - The ultimate memecoin creation platform" 
+export const metadata = getMetadata({
+  title: "Dr Shill",
+  description: "Dr Shill - Create memecoins, vote on memes, and get rewarded with crypto.",
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
