@@ -45,42 +45,42 @@ export const MemeDialog: React.FC<MemeDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative w-full max-w-md mx-auto bg-white dark:bg-base-100 shadow-lg rounded-lg overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Header */}
-        <div className="px-4 py-3 flex items-center border-b border-gray-200 dark:border-gray-700">
+        <div className="px-4 py-3 flex items-center border-b border-gray-200">
           <button onClick={() => onOpenChange(false)} className="mr-3">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path 
                 d="M15 18L9 12L15 6" 
-                stroke="currentColor" 
+                stroke="black" 
                 strokeWidth="2" 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
               />
             </svg>
           </button>
-          <h2 className="text-lg font-semibold text-black dark:text-white">${symbol}</h2>
+          <h2 className="text-lg font-semibold text-black">${symbol}</h2>
         </div>
 
         {/* Image and Description */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-gray-200">
           <div className="flex gap-4">
             {/* Meme Image */}
-            <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 flex-shrink-0 relative">
+            <div className="w-20 h-20 bg-gray-100 flex-shrink-0 relative">
               <Image src={imageUrl} alt={symbol} fill className="object-contain" sizes="80px" />
             </div>
 
             {/* Description and Action Buttons */}
             <div className="flex-1">
-              <p className="text-sm text-gray-800 dark:text-gray-200">{description}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">FULL DESCRIPTION - MAX 3 LINES</p>
+              <p className="text-sm text-gray-800">{description}</p>
+              <p className="text-xs text-gray-500 mt-1">FULL DESCRIPTION - MAX 3 LINES</p>
 
               {/* Action Buttons */}
               <div className="flex gap-2 mt-3">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 w-12 flex items-center justify-center">
                   <ThumbsDown className="h-5 w-5" />
                 </button>
-                <button className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 w-12 flex items-center justify-center text-gray-800 dark:text-gray-200">
+                <button className="bg-gray-100 hover:bg-gray-200 p-2 w-12 flex items-center justify-center text-gray-800">
                   <Ticket className="h-5 w-5" />
                 </button>
                 <button className="bg-orange-500 hover:bg-orange-600 text-white p-2 w-12 flex items-center justify-center">
@@ -88,7 +88,7 @@ export const MemeDialog: React.FC<MemeDialogProps> = ({
                 </button>
                 <div className="ml-auto flex items-center text-yellow-500">
                   <Ticket className="h-4 w-4 mr-1" />
-                  <span className="font-bold text-black dark:text-white">{ticketCount}</span>
+                  <span className="font-bold text-black">{ticketCount}</span>
                 </div>
               </div>
             </div>
@@ -97,14 +97,14 @@ export const MemeDialog: React.FC<MemeDialogProps> = ({
 
         {/* Comments Section */}
         <div>
-          <div className="text-sm font-medium px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-black dark:text-white">PINP CREATOR NAME</div>
+          <div className="text-sm font-medium px-4 py-2 border-b border-gray-200 text-black">PINP CREATOR NAME</div>
 
           {/* Comments List */}
-          <div className="flex flex-col divide-y divide-gray-200 dark:divide-gray-700">
+          <div className="flex flex-col divide-y divide-gray-200">
             {comments.map((item, index) => (
               <div key={index} className="px-4 py-2">
-                <div className="text-xs text-blue-600 dark:text-blue-400">{item.address}</div>
-                <div className="text-sm text-black dark:text-white">{item.comment}</div>
+                <div className="text-xs text-blue-600">{item.address}</div>
+                <div className="text-sm text-black">{item.comment}</div>
               </div>
             ))}
           </div>
@@ -116,7 +116,7 @@ export const MemeDialog: React.FC<MemeDialogProps> = ({
               value={comment}
               onChange={e => setComment(e.target.value)}
               placeholder="0x6389D472jn292m1..."
-              className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none"
+              className="flex-1 px-3 py-2 text-sm border border-gray-300 bg-white text-black focus:outline-none"
             />
             <button
               className="bg-blue-600 text-white px-6 py-2 text-sm font-medium"
