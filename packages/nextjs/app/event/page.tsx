@@ -5,36 +5,12 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { CreateMemeButton } from "~~/components/meme/CreateMemeButton";
 import { HowToShillDialog } from "~~/components/meme/HowToShillDialog";
-import { MemeCard } from "~~/components/meme/MemeCard";
 
 // Dynamically import Header with ssr: false
 const Header = dynamic(() => import("~~/components/meme/Header").then(mod => mod.Header), { 
   ssr: false,
   loading: () => <div className="h-[68px] mb-4 px-4">Loading Header...</div>, // Basic placeholder for header height
 });
-
-// Mock memes data
-const memes = [
-  {
-    symbol: "PINP",
-    description: "The coin that makes you a true individual. This should be a max of 3 lines of text...",
-    imageUrl: "/images/Image and frame.png",
-    ticketCount: 8045,
-    isTopPerformer: true,
-  },
-  {
-    symbol: "CRAP",
-    description: "This one's for the dookies out there.",
-    imageUrl: "/images/crap.png",
-    ticketCount: 324,
-  },
-  {
-    symbol: "KERN",
-    description: "The Opportunity you've all been waiting for. Invest at least 12 thumbs for good luck!",
-    imageUrl: "/images/cornim11 1.png",
-    ticketCount: 5,
-  },
-];
 
 // New component to handle search params and main content
 function EventPageContents() {
@@ -64,9 +40,6 @@ function EventPageContents() {
 
   return (
     <div className="min-h-screen py-0 px-0 bg-[url('https://storage.googleapis.com/tempo-public-images/github%7C71592960-1739296617275-phil_bg_6png')]">
-      <Suspense fallback={<div className="h-[68px] mb-4 px-4">Loading Header...</div>}> 
-        <Header />
-      </Suspense>
       <div className="px-4 py-8">
         <div className="w-full max-w-4xl mx-auto mb-6 p-4 bg-white shadow">
           <h1 className="text-xl font-serif">Event: {eventId}</h1>
@@ -75,11 +48,9 @@ function EventPageContents() {
 
         <CreateMemeButton ticketCost={60} />
         <div className="w-full max-w-4xl mx-auto space-y-4">
-          {memes.map(meme => (
-            <div key={meme.symbol} className="bg-white shadow">
-              <MemeCard {...meme} />
-            </div>
-          ))}
+          <div className="bg-white shadow p-6 text-center">
+            <p className="text-gray-600">No memes submitted yet. Be the first to create a meme!</p>
+          </div>
         </div>
       </div>
       <HowToShillDialog open={showHowTo} onOpenChange={setShowHowTo} />

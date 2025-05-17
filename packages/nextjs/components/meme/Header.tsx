@@ -132,16 +132,19 @@ export const Header: React.FC = () => {
   });
 
   const userHasClaimed = Boolean(hasClaimedData);
-
-  const { data: initialTokenAmountData } = useScaffoldReadContract({
+  
+  // Get the INITIAL_TOKEN_AMOUNT directly from the contract to ensure we're using the exact same value
+  const { data: initialTokenAmountRaw } = useScaffoldReadContract({
     contractName: "CropCircle",
     functionName: "INITIAL_TOKEN_AMOUNT",
-    args: undefined, // Assuming INITIAL_TOKEN_AMOUNT is a public variable with no args
     watch: true,
   });
-
-  const eventTokensClaimedAmount = initialTokenAmountData ? Number(initialTokenAmountData.toString()) : 100; // Fallback if INITIAL_TOKEN_AMOUNT is not found/readable or is zero
-
+  
+  // Use this for display purposes - convert from wei to human-readable format
+  const eventTokensClaimedAmount = initialTokenAmountRaw 
+    ? Number(initialTokenAmountRaw.toString()) / 10**18
+    : 100; // Fallback if INITIAL_TOKEN_AMOUNT is not found/readable or is zero
+  
   const displayTokenBalance = eventDetails && eventDetails.active && userHasClaimed ? eventTokensClaimedAmount : 0;
 
   const { writeContractAsync: provideInitialTokens, isPending: isClaimWritePending } =
@@ -223,17 +226,38 @@ export const Header: React.FC = () => {
 
   // Convert to BigInt for precise comparison - both values should be in wei format with 18 decimals
   const contractBalanceBigInt = contractTokenBalance ? BigInt(contractTokenBalance.toString()) : BigInt(0);
-  const requiredTokensBigInt = BigInt(eventTokensClaimedAmount);
+  
+  // Convert to BigInt to match the contract's expectation - using the raw value directly from the contract
+  const requiredTokensBigInt = initialTokenAmountRaw ? BigInt(initialTokenAmountRaw.toString()) : BigInt(100 * 10**18);
 
-  // FIXED: Compare BigInt values to avoid decimal precision issues
+  // CAUTION: This frontend check is just informational - the actual check happens in the contract
+  // We'll attempt the transaction regardless of this check
   const hasEnoughTokens = contractBalanceBigInt >= requiredTokensBigInt;
 
   // Keep number format for display calculations
   const contractBalanceNumber = Number(contractBalanceBigInt.toString());
+  const requiredTokensNumber = Number(requiredTokensBigInt.toString());
 
-  // Format the balances for display
-  const formattedContractBalance = contractBalanceNumber ? (contractBalanceNumber / 10 ** 18).toFixed(2) : "0";
-  const requiredTokens = (eventTokensClaimedAmount / 10 ** 18).toFixed(2);
+  // Format the balances for display - divide by 10^18 to convert from wei to token units
+  const formattedContractBalance = (contractBalanceNumber / 10 ** 18).toFixed(2);
+  const requiredTokens = (requiredTokensNumber / 10 ** 18).toFixed(2);
+
+  // Add debug logging for balance info - this will run on each render
+  useEffect(() => {
+    if (contractTokenBalance) {
+      console.log("========== CONTRACT BALANCE DEBUG ==========");
+      console.log("Contract balance (Wei):", contractBalanceBigInt.toString());
+      console.log("Contract balance (Tokens):", formattedContractBalance);
+      console.log("Required per user (Wei):", requiredTokensBigInt.toString());
+      console.log("Required per user (Tokens):", requiredTokens);
+      console.log("Has enough based on our check:", hasEnoughTokens ? "Yes" : "No");
+      if (!hasEnoughTokens) {
+        console.warn("WARNING: Contract appears to have insufficient balance for claims!");
+        console.log("Difference needed:", (Number(requiredTokensBigInt) - Number(contractBalanceBigInt)) / 10**18, "CROP");
+      }
+      console.log("===========================================");
+    }
+  }, [contractBalanceBigInt, requiredTokensBigInt, formattedContractBalance, requiredTokens, hasEnoughTokens]);
 
   const handleClaimTokens = async () => {
     if (!isConnected) {
@@ -247,80 +271,105 @@ export const Header: React.FC = () => {
       return;
     }
 
-    // Add extensive debugging information
-    console.log("============ CLAIM DEBUG INFO ============");
-    console.log("Event ID:", currentEventId);
-    console.log("User address:", address);
-    console.log("Event exists:", eventExists);
-    console.log("Event details:", eventDetails);
-    console.log("User claimed:", userHasClaimed);
-    console.log("Contract balance (raw):", contractBalanceNumber);
-    console.log("Contract balance (formatted):", formattedContractBalance, "CROP");
-    console.log("Required tokens (raw):", eventTokensClaimedAmount);
-    console.log("Required tokens (formatted):", requiredTokens, "CROP");
-    console.log("Has enough tokens:", hasEnoughTokens);
-
-    // Additional safety checks
-    if (userHasClaimed) {
-      alert(
-        "Our records show you've already claimed tokens for this event. If you think this is incorrect, please contact the event organizer.",
-      );
+    // Check if event exists and is valid
+    if (!eventDetails) {
+      alert("Unable to fetch event details. Please try again later.");
       return;
     }
 
-    // Check if the contract has enough tokens
-    if (!hasEnoughTokens) {
-      // Debug the comparison to understand why it's failing
-      console.log("DEBUG CONTRACT BALANCE COMPARISON:");
-      console.log("Contract balance raw:", contractBalanceNumber);
-      console.log("Required amount raw:", eventTokensClaimedAmount);
-      console.log("Comparison result:", contractBalanceNumber >= eventTokensClaimedAmount);
-      console.log("Decimal comparison:", contractBalanceNumber / 10 ** 18 >= eventTokensClaimedAmount / 10 ** 18);
+    // Current timestamp for time-based checks
+    const currentTimestamp = Math.floor(Date.now() / 1000);
 
-      // Try another approach - directly compare the formatted values
-      const isEnoughInHumanReadable = parseFloat(formattedContractBalance) >= parseFloat(requiredTokens);
-      console.log("Human readable comparison:", isEnoughInHumanReadable);
+    // Add extensive debugging information
+    console.log("============ CLAIM DEBUG INFO ============");
+    console.log("Event ID:", currentEventId);
+    console.log("Event ID type:", typeof currentEventId);
+    console.log("User address:", address);
+    console.log("Event exists:", eventExists);
+    console.log("Event is active:", eventDetails?.active);
+    console.log("Event start time:", eventDetails?.startTime, "current:", currentTimestamp, "valid:", eventDetails?.startTime <= currentTimestamp);
+    console.log("Event end time:", eventDetails?.endTime, "current:", currentTimestamp, "valid:", eventDetails?.endTime >= currentTimestamp);
+    console.log("User claimed:", userHasClaimed);
+    console.log("Contract balance (wei):", contractBalanceBigInt.toString());
+    console.log("Contract balance (formatted):", formattedContractBalance, "CROP");
+    console.log("Required tokens (wei):", requiredTokensBigInt.toString());
+    console.log("Required tokens (formatted):", requiredTokens, "CROP");
+    console.log("Has enough tokens (informational only):", hasEnoughTokens ? "Yes" : "No");
 
-      // If we have enough according to human readable but not the raw check, use that instead
-      if (isEnoughInHumanReadable) {
-        console.log("Contract appears to have enough tokens based on decimal comparison, continuing...");
-      } else {
-        alert(
-          `The contract doesn't have enough tokens to complete this claim. Contract has ${formattedContractBalance} CROP but needs ${requiredTokens} CROP. Please notify the event owner to refill the contract.`,
-        );
-        return;
-      }
+    // Additional safety checks - just for better UX, not essential
+    if (userHasClaimed) {
+      const shouldProceed = confirm(
+        "Our records show you've already claimed tokens for this event. Do you still want to try claiming again? (The contract will verify this regardless)"
+      );
+      if (!shouldProceed) return;
     }
 
-    // We'll provide the event ID directly without any modifications
-    const rawEventId = currentEventId;
-    console.log("Using raw event ID for claim:", rawEventId);
+    // Ensure the event ID is properly formatted for the contract
+    let formattedEventId = currentEventId;
+    
+    // Make sure it has the '0x' prefix
+    if (formattedEventId && !formattedEventId.startsWith('0x')) {
+      formattedEventId = '0x' + formattedEventId;
+      console.log("Added 0x prefix to event ID:", formattedEventId);
+    }
+    
+    // Ensure it's the correct length (bytes32 = 32 bytes = 64 hex chars + '0x' prefix = 66 chars)
+    if (formattedEventId && formattedEventId.length !== 66) {
+      console.warn("Event ID length is not 66 characters (including 0x prefix):", formattedEventId.length);
+      
+      // If it's too short, pad with zeros to 66 chars (pad after 0x prefix)
+      if (formattedEventId.length < 66) {
+        const paddingNeeded = 66 - formattedEventId.length;
+        const padding = '0'.repeat(paddingNeeded);
+        formattedEventId = formattedEventId.substring(0, 2) + padding + formattedEventId.substring(2);
+        console.log("Padded event ID to correct length:", formattedEventId);
+      } else if (formattedEventId.length > 66) {
+        // If it's too long, truncate to 66 chars (risky but better than failing)
+        formattedEventId = formattedEventId.substring(0, 66);
+        console.log("Truncated event ID to correct length:", formattedEventId);
+      }
+    }
+    
+    // Final ID check
+    if (!isValidEventIdFormat(formattedEventId)) {
+      console.error("Event ID format is still invalid after corrections:", formattedEventId);
+      // Continue anyway - let the contract handle it
+    }
 
     setIsClaimingTokens(true);
     try {
-      // Attempt the claim with minimal transformation of the input
+      // Log important details before the call
+      console.log("===== CLAIM TRANSACTION ATTEMPT =====");
+      console.log("Formatted Event ID:", formattedEventId);
+      console.log("Raw Event ID from URL:", searchParams?.get("id"));
+      
+      // Attempt the claim without frontend balance checks
       const tx = await provideInitialTokens({
         functionName: "provideInitialTokens",
-        args: [rawEventId as any],
+        args: [formattedEventId as any],
       });
 
       console.log("Claim transaction hash:", tx);
       alert("CROP tokens claimed successfully! Transaction: " + tx);
     } catch (error) {
       console.error("DETAILED ERROR:", error);
-      console.error(JSON.stringify(error, null, 2));
+      
+      // Get a clean string representation of the error
+      const errorString = typeof error === 'object' ? JSON.stringify(error, null, 2) : String(error);
+      console.log("Full error details:", errorString);
 
-      // Extract as much info as possible
-      let errorMsg = "Failed to claim tokens: ";
+      // Extract as much info as possible - simplify for users
+      let errorMsg = "";
 
       if (error instanceof Error) {
-        // Check for common error messages in different parts of the error object
-        const fullErrorString = JSON.stringify(error).toLowerCase();
+        // Check for common error messages but display simpler messages to users
+        const fullErrorString = errorString.toLowerCase();
 
         if (fullErrorString.includes("already claimed")) {
           errorMsg = "You have already claimed tokens for this event.";
         } else if (fullErrorString.includes("insufficient") || fullErrorString.includes("balance")) {
-          errorMsg = `The contract doesn't have enough tokens. Contract has ${formattedContractBalance} CROP but needs ${requiredTokens} CROP. Please notify the event owner to refill the contract.`;
+          // Simplify the message - don't expose technical details to users
+          errorMsg = "Unable to claim tokens at this time. Please try again later or contact the event organizer.";
         } else if (fullErrorString.includes("not active")) {
           errorMsg = "The event is not active.";
         } else if (fullErrorString.includes("not started")) {
@@ -330,28 +379,14 @@ export const Header: React.FC = () => {
         } else if (fullErrorString.includes("rejected") || fullErrorString.includes("denied")) {
           errorMsg = "You rejected the transaction in your wallet.";
         } else {
-          // Try to extract a more meaningful error message
-          const simpleMsg = error.message.split("(")[0].trim();
-          errorMsg += simpleMsg.length > 0 ? simpleMsg : "Unknown error";
-
-          // If we're still getting a generic revert, let's show contract state info
-          if (simpleMsg.includes("reverted") || simpleMsg.includes("unknown reason")) {
-            errorMsg += "\n\nCRITICAL DEBUG - Event ID: " + currentEventId;
-            errorMsg += "\nExists: " + (eventExists ? "Yes" : "No");
-            errorMsg += "\nActive: " + (eventDetails?.active ? "Yes" : "No");
-            errorMsg += "\nContract balance: " + formattedContractBalance + " CROP (needs " + requiredTokens + " CROP)";
-            errorMsg +=
-              "\nTime window: " +
-              (eventDetails
-                ? new Date(eventDetails.startTime * 1000).toLocaleString() +
-                  " to " +
-                  new Date(eventDetails.endTime * 1000).toLocaleString()
-                : "Unknown");
-            errorMsg += "\n\nPlease copy this information and send it to the developer.";
-          }
+          // Just show a generic message for users
+          errorMsg = "Unable to claim tokens at this time. Please try again later.";
+          
+          // But log the actual error for debugging
+          console.error("Raw contract error:", error.message);
         }
       } else {
-        errorMsg += "Unknown error type";
+        errorMsg = "Unable to claim tokens at this time. Please try again later.";
       }
 
       alert(errorMsg);
@@ -360,20 +395,27 @@ export const Header: React.FC = () => {
     }
   };
 
-  // Add refill tokens function
+  // Modify handleRefillTokens to make it more effective
   const handleRefillTokens = async () => {
-    if (!isConnected || !isOwner) {
-      alert("Only the event owner can refill tokens.");
+    if (!isConnected) {
+      alert("Please connect your wallet first.");
       return;
     }
 
     console.log("======== CONTRACT REFILL DEBUG ========");
     console.log("User token balance:", userTokenBalanceNumber);
-    console.log("Contract token balance (raw):", contractBalanceNumber);
+    console.log("Contract token balance (wei):", contractBalanceBigInt.toString());
     console.log("Contract token balance (formatted):", formattedContractBalance, "CROP");
-    console.log("Required tokens per user:", requiredTokens, "CROP");
+    console.log("Required tokens per user (formatted):", requiredTokens, "CROP");
     console.log("CropCircle contract address:", cropCircleAddress);
     console.log("CropToken contract address:", cropTokenAddress);
+    console.log("Is owner:", isOwner);
+    
+    // Allow non-owners to request a refill from the owner
+    if (!isOwner) {
+      alert(`This contract needs more tokens to process claims. Please contact the owner to refill it.\n\nCurrent balance: ${formattedContractBalance} CROP\nNeeded per user: ${requiredTokens} CROP`);
+      return;
+    }
 
     if (!cropCircleAddress || !cropTokenAddress || !cropCircleContractData || !cropTokenContractData) {
       alert("Cannot find contract addresses. Please try again later.");
@@ -385,18 +427,27 @@ export const Header: React.FC = () => {
       return;
     }
 
-    // Calculate a better default amount - enough for 20 users minimum
-    const suggestedAmount = Math.max(2000, Math.ceil(eventTokensClaimedAmount / 10 ** 18) * 20).toFixed(0);
+    // Calculate a better default amount - enough for at least 20 users
+    // We need to use the raw token amount divided by 10^18 since userTokenBalanceNumber is already in human-readable format
+    const requiredPerUser = Number(requiredTokensBigInt) / 10**18;
+    // Calculate how many users the contract can currently support
+    const currentUserCapacity = Math.floor(Number(contractBalanceBigInt) / Number(requiredTokensBigInt));
+    
+    // Make more obvious suggestions based on actual balance
+    const minimumSuggestedUsers = Math.max(20, currentUserCapacity + 10);
+    const suggestedAmount = Math.ceil(requiredPerUser * minimumSuggestedUsers).toFixed(0);
+    
     const amount = prompt(
-      `Enter amount of CROP tokens to add to the contract (needs approval):\n\nYour balance: ${userTokenBalanceNumber.toFixed(2)} CROP\nContract current balance: ${formattedContractBalance} CROP\nContract needs at least ${requiredTokens} CROP per user\n\nSuggested amount (for 20 users): ${suggestedAmount} CROP`,
+      `CONTRACT REFILL REQUIRED!\n\nCurrent balance: ${formattedContractBalance} CROP (can support ${currentUserCapacity} users)\nNeeded per user: ${requiredTokens} CROP\n\nEnter amount of CROP tokens to add:\nYour balance: ${userTokenBalanceNumber.toFixed(2)} CROP\n\nRecommended amount (for ${minimumSuggestedUsers} users): ${suggestedAmount} CROP`,
       suggestedAmount,
     );
 
     if (!amount) return;
 
     try {
-      // Convert to wei (or the token's smallest unit)
+      // Convert to wei (or the token's smallest unit) - multiply by 10^18
       const amountBigInt = BigInt(Math.floor(parseFloat(amount) * 10 ** 18));
+      console.log("Amount to refill (wei):", amountBigInt.toString());
 
       // Step 1: First approve the CropCircle contract to spend tokens
       alert("Step 1/2: You'll be asked to approve the contract to spend your CROP tokens.");
@@ -523,7 +574,7 @@ export const Header: React.FC = () => {
               </div>
             )}
 
-            {/* Contract balance warning for owners */}
+            {/* Only show refill button to owners - not regular users */}
             {isConnected && isOwner && contractBalanceNumber < eventTokensClaimedAmount * 2 && (
               <button
                 onClick={handleRefillTokens}
@@ -534,9 +585,11 @@ export const Header: React.FC = () => {
               </button>
             )}
 
-            {isConnected && currentEventId && statusTextOutput !== "Invalid Event ID" && (
+            {/* Only show event status on event pages, not the main page */}
+            {isConnected && currentEventId && statusTextOutput !== "Invalid Event ID" && isEventPage && (
               <div className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">{statusTextOutput}</div>
             )}
+            
             {isConnected && isOwner && !isEventPage && (
               <button
                 onClick={() => setShowCreateEventDialog(true)}
